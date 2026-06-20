@@ -1,325 +1,152 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export type CardSet = {
-  name: string;
-  code: string;
-  year: string;
-  color: string;
+type Slide = {
+  title: string;
+  subtitle: string;
+  color1: string;
+  color2: string;
+  emoji: string;
 };
 
-export type SetGroup = {
-  series: string;
-  sets: CardSet[];
-};
-
-export const GAME_SET_GROUPS: Record<string, SetGroup[]> = {
+const GAME_SLIDES: Record<string, Slide[]> = {
   pokemon: [
-    {
-      series: "Scarlet & Violet (SV)",
-      sets: [
-        { name: "Stellar Crown", code: "SV07", year: "2024", color: "#6B21A8" },
-        { name: "Twilight Masquerade", code: "SV06", year: "2024", color: "#1D4ED8" },
-        { name: "Temporal Forces", code: "SV05", year: "2024", color: "#B45309" },
-        { name: "Paradox Rift", code: "SV04", year: "2023", color: "#065F46" },
-        { name: "Obsidian Flames", code: "OBF", year: "2023", color: "#7C2D12" },
-        { name: "Paldea Evolved", code: "PAL", year: "2023", color: "#1E40AF" },
-        { name: "Scarlet & Violet Base", code: "SVI", year: "2023", color: "#9A3412" },
-      ],
-    },
-    {
-      series: "Sword & Shield (SS)",
-      sets: [
-        { name: "Crown Zenith", code: "CRZ", year: "2023", color: "#4C1D95" },
-        { name: "Silver Tempest", code: "SIT", year: "2022", color: "#164E63" },
-        { name: "Lost Origin", code: "LOR", year: "2022", color: "#1C1917" },
-        { name: "Pokemon GO", code: "PGO", year: "2022", color: "#166534" },
-        { name: "Astral Radiance", code: "ASR", year: "2022", color: "#1E3A5F" },
-        { name: "Brilliant Stars", code: "BRS", year: "2022", color: "#713F12" },
-      ],
-    },
-    {
-      series: "Sun & Moon (SM)",
-      sets: [
-        { name: "Cosmic Eclipse", code: "CEC", year: "2019", color: "#1E1B4B" },
-        { name: "Hidden Fates", code: "HIF", year: "2019", color: "#7F1D1D" },
-        { name: "Unified Minds", code: "UNM", year: "2019", color: "#064E3B" },
-        { name: "Unbroken Bonds", code: "UNB", year: "2019", color: "#1A2E05" },
-      ],
-    },
+    { title: "Scarlet & Violet — Stellar Crown", subtitle: "Rilis 2024 · SV07", color1: "#6B21A8", color2: "#A855F7", emoji: "👑" },
+    { title: "Twilight Masquerade", subtitle: "Rilis 2024 · SV06", color1: "#1D4ED8", color2: "#60A5FA", emoji: "🎭" },
+    { title: "Obsidian Flames", subtitle: "Rilis 2023 · OBF", color1: "#7C2D12", color2: "#F97316", emoji: "🔥" },
+    { title: "Paldea Evolved", subtitle: "Rilis 2023 · PAL", color1: "#1E40AF", color2: "#38BDF8", emoji: "⚡" },
   ],
   yugioh: [
-    {
-      series: "2024",
-      sets: [
-        { name: "Legacy of Destruction", code: "LEDE", year: "2024", color: "#7C2D12" },
-        { name: "Phantom Nightmare", code: "PHNI", year: "2024", color: "#1C1917" },
-        { name: "Rage of the Abyss", code: "ROTA", year: "2024", color: "#1E3A5F" },
-      ],
-    },
-    {
-      series: "2023",
-      sets: [
-        { name: "Age of Overlord", code: "AGOV", year: "2023", color: "#6B21A8" },
-        { name: "Quarter Century Bonanza", code: "QCSE", year: "2023", color: "#92400E" },
-        { name: "Cyberstorm Access", code: "CYAC", year: "2023", color: "#164E63" },
-        { name: "Darkwing Blast", code: "DABL", year: "2023", color: "#1C1917" },
-      ],
-    },
+    { title: "Legacy of Destruction", subtitle: "Rilis 2024 · LEDE", color1: "#7C2D12", color2: "#FCD34D", emoji: "⚔️" },
+    { title: "Phantom Nightmare", subtitle: "Rilis 2024 · PHNI", color1: "#1C1917", color2: "#A78BFA", emoji: "👻" },
+    { title: "Age of Overlord", subtitle: "Rilis 2023 · AGOV", color1: "#6B21A8", color2: "#E879F9", emoji: "🏰" },
   ],
   "one-piece": [
-    {
-      series: "OP Series",
-      sets: [
-        { name: "OP-09 Emperors in the New World", code: "OP-09", year: "2024", color: "#7F1D1D" },
-        { name: "OP-08 Two Legends", code: "OP-08", year: "2024", color: "#1E3A5F" },
-        { name: "OP-07 500 Years in the Future", code: "OP-07", year: "2024", color: "#166534" },
-        { name: "OP-06 Wings of the Captain", code: "OP-06", year: "2023", color: "#92400E" },
-        { name: "OP-05 Awakening of the New Era", code: "OP-05", year: "2023", color: "#4C1D95" },
-        { name: "OP-04 Kingdoms of Intrigue", code: "OP-04", year: "2023", color: "#1C1917" },
-        { name: "OP-03 Pillars of Strength", code: "OP-03", year: "2023", color: "#164E63" },
-        { name: "OP-02 Paramount War", code: "OP-02", year: "2022", color: "#7C2D12" },
-        { name: "OP-01 Romance Dawn", code: "OP-01", year: "2022", color: "#B45309" },
-      ],
-    },
+    { title: "OP-09 Emperors in the New World", subtitle: "Rilis 2024 · OP-09", color1: "#7F1D1D", color2: "#FCA5A5", emoji: "🏴‍☠️" },
+    { title: "OP-08 Two Legends", subtitle: "Rilis 2024 · OP-08", color1: "#1E3A5F", color2: "#7DD3FC", emoji: "⚓" },
+    { title: "OP-01 Romance Dawn", subtitle: "Rilis 2022 · OP-01", color1: "#92400E", color2: "#FDE68A", emoji: "🌊" },
   ],
   digimon: [
-    {
-      series: "BT Series",
-      sets: [
-        { name: "BT-16 Beginning Observer", code: "BT-16", year: "2024", color: "#1E3A5F" },
-        { name: "BT-15 Exceed Apocalypse", code: "BT-15", year: "2024", color: "#7F1D1D" },
-        { name: "BT-14 Blast Ace", code: "BT-14", year: "2023", color: "#92400E" },
-        { name: "BT-13 Versus Royal Knights", code: "BT-13", year: "2023", color: "#4C1D95" },
-      ],
-    },
-    {
-      series: "EX Series",
-      sets: [
-        { name: "EX-07 Digimon Liberator", code: "EX-07", year: "2024", color: "#166534" },
-        { name: "EX-06 Infernal Ascension", code: "EX-06", year: "2023", color: "#1C1917" },
-        { name: "EX-05 Animal Colosseum", code: "EX-05", year: "2023", color: "#164E63" },
-      ],
-    },
+    { title: "BT-16 Beginning Observer", subtitle: "Rilis 2024 · BT-16", color1: "#1E3A5F", color2: "#93C5FD", emoji: "🦎" },
+    { title: "EX-07 Digimon Liberator", subtitle: "Rilis 2024 · EX-07", color1: "#166534", color2: "#86EFAC", emoji: "🌐" },
+    { title: "BT-15 Exceed Apocalypse", subtitle: "Rilis 2024 · BT-15", color1: "#7F1D1D", color2: "#FCA5A5", emoji: "💥" },
   ],
   "weiss-schwarz": [
-    {
-      series: "2024",
-      sets: [
-        { name: "Hololive Production Vol.3", code: "HOL/WE36", year: "2024", color: "#6B21A8" },
-        { name: "Blue Archive", code: "BA/W112", year: "2024", color: "#1E3A5F" },
-        { name: "Frieren: Beyond Journey's End", code: "FRI/W114", year: "2024", color: "#166534" },
-      ],
-    },
-    {
-      series: "2023",
-      sets: [
-        { name: "Bocchi the Rock!", code: "BTR/W103", year: "2023", color: "#9A3412" },
-        { name: "Sword Art Online", code: "SAO/S100", year: "2023", color: "#1C1917" },
-        { name: "Spy x Family", code: "SXF/S98", year: "2023", color: "#166534" },
-      ],
-    },
+    { title: "Hololive Production Vol.3", subtitle: "Rilis 2024 · HOL/WE36", color1: "#6B21A8", color2: "#E879F9", emoji: "🎤" },
+    { title: "Blue Archive", subtitle: "Rilis 2024 · BA/W112", color1: "#1E3A5F", color2: "#7DD3FC", emoji: "📚" },
+    { title: "Bocchi the Rock!", subtitle: "Rilis 2023 · BTR/W103", color1: "#9A3412", color2: "#FCA5A5", emoji: "🎸" },
   ],
   vanguard: [
-    {
-      series: "D Series",
-      sets: [
-        { name: "D-BT14 Onslaught of Dragon Souls", code: "D-BT14", year: "2024", color: "#7F1D1D" },
-        { name: "D-BT13 Dragontree Invasion", code: "D-BT13", year: "2024", color: "#166534" },
-        { name: "D-BT12 Evenfall Onslaught", code: "D-BT12", year: "2023", color: "#1E3A5F" },
-      ],
-    },
-    {
-      series: "V Series",
-      sets: [
-        { name: "V-SS10 Festival Collection", code: "V-SS10", year: "2023", color: "#4C1D95" },
-        { name: "V-BT12 Divine Lightning Radiance", code: "V-BT12", year: "2022", color: "#92400E" },
-      ],
-    },
+    { title: "D-BT14 Onslaught of Dragon Souls", subtitle: "Rilis 2024 · D-BT14", color1: "#7F1D1D", color2: "#FCA5A5", emoji: "🐉" },
+    { title: "D-BT13 Dragontree Invasion", subtitle: "Rilis 2024 · D-BT13", color1: "#166534", color2: "#86EFAC", emoji: "🌳" },
   ],
   "duel-masters": [
-    {
-      series: "2024",
-      sets: [
-        { name: "DM24-RP1", code: "DM24-RP1", year: "2024", color: "#1E3A5F" },
-        { name: "DM23-EX3", code: "DM23-EX3", year: "2023", color: "#166534" },
-        { name: "DM23-BD1", code: "DM23-BD1", year: "2023", color: "#7F1D1D" },
-      ],
-    },
+    { title: "DM24-RP1", subtitle: "Rilis 2024", color1: "#1E3A5F", color2: "#7DD3FC", emoji: "🔥" },
+    { title: "DM23-EX3", subtitle: "Rilis 2023", color1: "#166534", color2: "#86EFAC", emoji: "⚡" },
   ],
   "battle-spirits": [
-    {
-      series: "Saga Series",
-      sets: [
-        { name: "BSS04 Savior of Chaos", code: "BSS04", year: "2024", color: "#7F1D1D" },
-        { name: "BSS03 Aquatic Invaders", code: "BSS03", year: "2023", color: "#1E3A5F" },
-        { name: "BSS02 False Gods", code: "BSS02", year: "2023", color: "#4C1D95" },
-      ],
-    },
+    { title: "BSS04 Savior of Chaos", subtitle: "Rilis 2024 · BSS04", color1: "#7F1D1D", color2: "#FCA5A5", emoji: "💥" },
+    { title: "BSS03 Aquatic Invaders", subtitle: "Rilis 2023 · BSS03", color1: "#1E3A5F", color2: "#7DD3FC", emoji: "🌊" },
   ],
   lorcana: [
-    {
-      series: "All Sets",
-      sets: [
-        { name: "Ursula's Return", code: "URR", year: "2024", color: "#4C1D95" },
-        { name: "Into the Inklands", code: "ITI", year: "2024", color: "#1E3A5F" },
-        { name: "Rise of the Floodborn", code: "ROF", year: "2023", color: "#92400E" },
-        { name: "The First Chapter", code: "TFC", year: "2023", color: "#166534" },
-      ],
-    },
+    { title: "Ursula's Return", subtitle: "Rilis 2024 · URR", color1: "#4C1D95", color2: "#C4B5FD", emoji: "🐙" },
+    { title: "Into the Inklands", subtitle: "Rilis 2024 · ITI", color1: "#1E3A5F", color2: "#7DD3FC", emoji: "✨" },
+    { title: "The First Chapter", subtitle: "Rilis 2023 · TFC", color1: "#166534", color2: "#86EFAC", emoji: "📖" },
   ],
   gundam: [
-    {
-      series: "Starter Decks",
-      sets: [
-        { name: "ST02 Zeon Forces", code: "ST02", year: "2024", color: "#1C1917" },
-        { name: "ST01 Earth Federation Forces", code: "ST01", year: "2024", color: "#1E3A5F" },
-      ],
-    },
+    { title: "ST02 Zeon Forces", subtitle: "Rilis 2024 · ST02", color1: "#1C1917", color2: "#A8A29E", emoji: "🤖" },
+    { title: "ST01 Earth Federation Forces", subtitle: "Rilis 2024 · ST01", color1: "#1E3A5F", color2: "#7DD3FC", emoji: "🚀" },
   ],
   wixoss: [
-    {
-      series: "Diva Selection",
-      sets: [
-        { name: "WXDi-P17", code: "WXDi-P17", year: "2024", color: "#6B21A8" },
-        { name: "WXDi-P16", code: "WXDi-P16", year: "2023", color: "#7F1D1D" },
-        { name: "WXDi-P15", code: "WXDi-P15", year: "2023", color: "#4C1D95" },
-      ],
-    },
+    { title: "WXDi-P17", subtitle: "Rilis 2024", color1: "#6B21A8", color2: "#E879F9", emoji: "🌸" },
+    { title: "WXDi-P16", subtitle: "Rilis 2023", color1: "#7F1D1D", color2: "#FCA5A5", emoji: "💫" },
   ],
   "build-divide": [
-    {
-      series: "All Sets",
-      sets: [
-        { name: "BD/W127", code: "BD/W127", year: "2024", color: "#166534" },
-        { name: "BD/W112", code: "BD/W112", year: "2023", color: "#1E3A5F" },
-      ],
-    },
+    { title: "BD/W127", subtitle: "Rilis 2024", color1: "#166534", color2: "#86EFAC", emoji: "🏗️" },
+    { title: "BD/W112", subtitle: "Rilis 2023", color1: "#1E3A5F", color2: "#7DD3FC", emoji: "⚙️" },
   ],
   "union-arena": [
-    {
-      series: "EX Series",
-      sets: [
-        { name: "EX06BT Naruto Shippuden", code: "EX06BT", year: "2024", color: "#92400E" },
-        { name: "EX05BT One Piece Film Red", code: "EX05BT", year: "2023", color: "#7F1D1D" },
-        { name: "EX04BT Bleach", code: "EX04BT", year: "2023", color: "#1C1917" },
-      ],
-    },
+    { title: "EX06BT Naruto Shippuden", subtitle: "Rilis 2024", color1: "#92400E", color2: "#FDE68A", emoji: "🍥" },
+    { title: "EX05BT One Piece Film Red", subtitle: "Rilis 2023", color1: "#7F1D1D", color2: "#FCA5A5", emoji: "🏴‍☠️" },
   ],
   hololive: [
-    {
-      series: "Collections",
-      sets: [
-        { name: "Hololive 2nd Collection", code: "HOL-02", year: "2024", color: "#6B21A8" },
-        { name: "Hololive 1st Collection", code: "HOL-01", year: "2023", color: "#4C1D95" },
-      ],
-    },
+    { title: "Hololive 2nd Collection", subtitle: "Rilis 2024 · HOL-02", color1: "#6B21A8", color2: "#E879F9", emoji: "🎤" },
+    { title: "Hololive 1st Collection", subtitle: "Rilis 2023 · HOL-01", color1: "#4C1D95", color2: "#C4B5FD", emoji: "⭐" },
   ],
   lycee: [
-    {
-      series: "Ver. Series",
-      sets: [
-        { name: "Ver. TYPE-MOON 4.0", code: "TM4.0", year: "2024", color: "#7F1D1D" },
-        { name: "Ver. Yuzusoft 5.0", code: "YZ5.0", year: "2023", color: "#4C1D95" },
-      ],
-    },
+    { title: "Ver. TYPE-MOON 4.0", subtitle: "Rilis 2024", color1: "#7F1D1D", color2: "#FCA5A5", emoji: "🌙" },
+    { title: "Ver. Yuzusoft 5.0", subtitle: "Rilis 2023", color1: "#4C1D95", color2: "#C4B5FD", emoji: "🌸" },
   ],
   supply: [
-    {
-      series: "Aksesoris",
-      sets: [
-        { name: "Sleeve Premium", code: "SLV", year: "2024", color: "#1C1917" },
-        { name: "Deck Box", code: "DBX", year: "2024", color: "#166534" },
-        { name: "Binder / Album", code: "BND", year: "2024", color: "#92400E" },
-        { name: "Playmat", code: "PLM", year: "2024", color: "#1E3A5F" },
-      ],
-    },
+    { title: "Sleeve & Deck Box Terbaru", subtitle: "Aksesoris Premium", color1: "#1C1917", color2: "#A8A29E", emoji: "🛍️" },
+    { title: "Playmat Edisi Terbatas", subtitle: "Koleksi 2024", color1: "#166534", color2: "#86EFAC", emoji: "🎮" },
   ],
 };
 
-function SingleRow({ sets }: { sets: CardSet[] }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canLeft, setCanLeft] = useState(false);
-  const [canRight, setCanRight] = useState(false);
-
-  const update = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 0);
-    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  };
+export default function SetCarousel({ slug }: { slug: string }) {
+  const slides = GAME_SLIDES[slug] ?? [];
+  const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    update();
-    scrollRef.current?.addEventListener("scroll", update);
-    window.addEventListener("resize", update);
-    return () => {
-      scrollRef.current?.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, []);
+    if (slides.length <= 1) return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 3500);
+    return () => clearInterval(t);
+  }, [slides.length]);
 
-  const scroll = (dir: "left" | "right") =>
-    scrollRef.current?.scrollBy({ left: dir === "left" ? -320 : 320, behavior: "smooth" });
+  if (slides.length === 0) return null;
+
+  const slide = slides[idx];
 
   return (
-    <div className="relative">
-      {canLeft && (
-        <button onClick={() => scroll("left")} className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5">
-          <ChevronLeft size={16} />
-        </button>
-      )}
+    <div className="relative overflow-hidden rounded-xl mb-6" style={{ height: 220 }}>
+      {/* Slide */}
       <div
-        ref={scrollRef}
-        className="flex gap-3 overflow-x-auto py-1"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="absolute inset-0 flex items-center px-10 gap-8 transition-all duration-700"
+        style={{ background: `linear-gradient(135deg, ${slide.color1}, ${slide.color2})` }}
       >
-        {sets.map((s) => (
-          <div
-            key={s.code}
-            className="shrink-0 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            style={{ width: 130 }}
-          >
-            <div
-              className="flex flex-col items-center justify-center gap-2 text-white"
-              style={{ backgroundColor: s.color, height: 175 }}
-            >
-              <span className="text-4xl">🃏</span>
-              <span className="text-xs font-bold px-2 text-center leading-tight opacity-90">{s.code}</span>
-            </div>
-            <div className="bg-white px-2 py-2">
-              <div className="text-xs text-gray-400">{s.year}</div>
-              <div className="text-xs font-semibold text-gray-800 leading-tight line-clamp-2">{s.name}</div>
-            </div>
-          </div>
+        {/* Big emoji as mock artwork */}
+        <div className="text-9xl opacity-80 select-none">{slide.emoji}</div>
+        <div className="text-white">
+          <div className="text-xs font-semibold opacity-70 uppercase tracking-widest mb-2">Set Terbaru</div>
+          <div className="text-3xl font-black leading-tight mb-1">{slide.title}</div>
+          <div className="text-sm opacity-80">{slide.subtitle}</div>
+          <button className="mt-4 bg-white/20 hover:bg-white/30 backdrop-blur text-white text-sm font-semibold px-5 py-2 rounded-full transition">
+            Lihat Kartu →
+          </button>
+        </div>
+      </div>
+
+      {/* Arrows */}
+      <button
+        onClick={() => setIdx((i) => (i - 1 + slides.length) % slides.length)}
+        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1.5"
+      >
+        <ChevronLeft size={18} />
+      </button>
+      <button
+        onClick={() => setIdx((i) => (i + 1) % slides.length)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1.5"
+      >
+        <ChevronRight size={18} />
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIdx(i)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === idx ? 20 : 8,
+              height: 8,
+              backgroundColor: i === idx ? "white" : "rgba(255,255,255,0.4)",
+            }}
+          />
         ))}
       </div>
-      {canRight && (
-        <button onClick={() => scroll("right")} className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5">
-          <ChevronRight size={16} />
-        </button>
-      )}
-    </div>
-  );
-}
-
-export default function SetCarousel({ slug }: { slug: string }) {
-  const groups = GAME_SET_GROUPS[slug] ?? [];
-  if (groups.length === 0) return null;
-
-  return (
-    <div className="space-y-6">
-      {groups.map((group) => (
-        <div key={group.series}>
-          <h3 className="font-bold text-sm text-gray-700 mb-3 flex items-center gap-2">
-            <span className="w-1 h-4 bg-red-500 rounded-full inline-block" />
-            {group.series}
-          </h3>
-          <SingleRow sets={group.sets} />
-        </div>
-      ))}
     </div>
   );
 }

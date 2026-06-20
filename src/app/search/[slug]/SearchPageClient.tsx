@@ -53,11 +53,8 @@ export default function SearchPageClient({ slug, game }: Props) {
         </div>
       </div>
 
-      {/* Set carousel */}
-      <div className="bg-white rounded-xl shadow-sm px-4 pt-3 pb-2 mb-6">
-        <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Set / Edisi Tersedia</div>
-        <SetCarousel slug={slug} />
-      </div>
+      {/* Auto-playing carousel — full width above filters */}
+      <SetCarousel slug={slug} />
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar filters */}
