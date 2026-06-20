@@ -20,13 +20,13 @@ export default function GameCategories() {
     <section>
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-black text-gray-900 text-lg">Kategori Game</h2>
-        <Link href="/game" className="text-sm text-red-600 hover:underline font-medium">Semua game →</Link>
+        <Link href="/search" className="text-sm text-red-600 hover:underline font-medium">Semua game →</Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {GAMES.map((g) => (
           <Link
             key={g.slug}
-            href={`/game/${g.slug}`}
+            href={`/search/${g.slug}`}
             className={`${g.color} ${g.text} rounded-xl p-4 flex flex-col items-center gap-2 hover:opacity-90 transition-opacity shadow-sm text-center`}
           >
             <span className="text-3xl">{g.emoji}</span>

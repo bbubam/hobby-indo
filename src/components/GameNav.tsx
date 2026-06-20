@@ -64,7 +64,7 @@ export default function GameNav() {
           {GAMES.map((game) => (
             <Link
               key={game.slug}
-              href={`/game/${game.slug}`}
+              href={`/search/${game.slug}`}
               className="shrink-0 px-4 py-3 text-sm font-medium hover:bg-gray-700 whitespace-nowrap border-b-2 border-transparent hover:border-red-500 transition-colors"
             >
               {game.name}
