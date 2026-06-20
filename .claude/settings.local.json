@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(if \\(-not $?\\) { \"Directory is empty or doesn't exist - safe to scaffold\" })"
+      "PowerShell(if \\(-not $?\\) { \"Directory is empty or doesn't exist - safe to scaffold\" })",
+      "WebFetch(domain:www.hobbystation-single.jp)"
     ]
   }
 }
