@@ -33,7 +33,6 @@ type Props = {
 };
 
 export default function SearchPageClient({ slug, game }: Props) {
-  const [activeSet, setActiveSet] = useState<string | null>(null);
   const [activeRarity, setActiveRarity] = useState("Semua");
 
   return (
@@ -56,14 +55,8 @@ export default function SearchPageClient({ slug, game }: Props) {
 
       {/* Set carousel */}
       <div className="bg-white rounded-xl shadow-sm px-4 pt-3 pb-2 mb-6">
-        <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Pilih Set / Edisi</div>
-        <SetCarousel slug={slug} activeSet={activeSet} onSelect={setActiveSet} />
-        {activeSet && (
-          <div className="mt-2 text-sm text-gray-600">
-            Menampilkan set: <span className="font-semibold text-gray-900">{activeSet}</span>
-            <button onClick={() => setActiveSet(null)} className="ml-2 text-red-500 hover:underline text-xs">× hapus filter</button>
-          </div>
-        )}
+        <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Set / Edisi Tersedia</div>
+        <SetCarousel slug={slug} />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -116,8 +109,7 @@ export default function SearchPageClient({ slug, game }: Props) {
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <p className="text-sm text-gray-500">
               Menampilkan <span className="font-semibold text-gray-800">{MOCK_CARDS.length}</span> kartu
-              {activeSet && <span className="text-gray-400"> · {activeSet}</span>}
-            </p>
+              </p>
             <div className="flex items-center gap-2">
               <SlidersHorizontal size={14} className="text-gray-400" />
               <select className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-red-500">

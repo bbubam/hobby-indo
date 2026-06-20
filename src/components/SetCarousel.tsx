@@ -110,11 +110,7 @@ const GAME_SETS: Record<string, CardSet[]> = {
   ],
 };
 
-export default function SetCarousel({ slug, activeSet, onSelect }: {
-  slug: string;
-  activeSet: string | null;
-  onSelect: (name: string | null) => void;
-}) {
+export default function SetCarousel({ slug }: { slug: string }) {
   const sets = GAME_SETS[slug] ?? [];
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canLeft, setCanLeft] = useState(false);
@@ -148,7 +144,7 @@ export default function SetCarousel({ slug, activeSet, onSelect }: {
       {canLeft && (
         <button
           onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5 hover:bg-gray-50"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5 hover:bg-gray-50"
         >
           <ChevronLeft size={18} />
         </button>
@@ -156,42 +152,35 @@ export default function SetCarousel({ slug, activeSet, onSelect }: {
 
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto px-1 py-2"
+        className="flex gap-3 overflow-x-auto py-2 px-1"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {/* "All" pill */}
-        <button
-          onClick={() => onSelect(null)}
-          className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-colors ${
-            activeSet === null
-              ? "bg-gray-900 text-white border-gray-900"
-              : "bg-white text-gray-700 border-gray-200 hover:border-gray-400"
-          }`}
-        >
-          Semua Set
-        </button>
-
         {sets.map((s) => (
-          <button
+          <div
             key={s.code}
-            onClick={() => onSelect(s.name)}
-            className="shrink-0 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border-2 text-left"
-            style={{ borderColor: activeSet === s.name ? s.color : "transparent", minWidth: 160 }}
+            className="shrink-0 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            style={{ width: 140 }}
           >
-            {/* Color band */}
-            <div className="h-2" style={{ backgroundColor: s.color }} />
-            <div className="bg-white px-3 py-2.5">
-              <div className="text-xs font-bold text-gray-400 mb-0.5">{s.code} · {s.year}</div>
+            {/* Fake booster pack image */}
+            <div
+              className="flex flex-col items-center justify-center gap-1 text-white"
+              style={{ backgroundColor: s.color, height: 190 }}
+            >
+              <span className="text-4xl">🃏</span>
+              <span className="text-xs font-bold px-2 text-center leading-tight opacity-90">{s.code}</span>
+            </div>
+            <div className="bg-white px-2 py-2">
+              <div className="text-xs text-gray-400 font-medium">{s.year}</div>
               <div className="text-xs font-semibold text-gray-800 leading-tight line-clamp-2">{s.name}</div>
             </div>
-          </button>
+          </div>
         ))}
       </div>
 
       {canRight && (
         <button
           onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5 hover:bg-gray-50"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5 hover:bg-gray-50"
         >
           <ChevronRight size={18} />
         </button>
